@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stamboom Familie Tollet</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Lora -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,600;0,700;1,500&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #faf7f2;
+            color: #292524;
+        }
+        h1, h2, h3, .font-serif-title {
+            font-family: 'Lora', serif;
+        }
+        /* Compacte inspringing op gsm, ruimer op grotere schermen */
+        .tree-branch {
+            position: relative;
+            padding-left: 0.85rem;
+        }
+        @media (min-width: 640px) {
+            .tree-branch {
+                padding-left: 1.5rem;
+            }
+        }
+        .tree-branch::before {
+            content: '';
+            position: absolute;
+            left: 0.35rem;
+            top: 0;
+            bottom: 0.75rem;
+            width: 2px;
+            background-color: #e7e5e4;
+            border-radius: 999px;
+        }
+        @media (min-width: 640px) {
+            .tree-branch::before {
+                left: 0.55rem;
+            }
+        }
+        .tree-node {
+            position: relative;
+        }
+        .tree-node::before {
+            content: '';
+            position: absolute;
+            left: -0.5rem;
+            top: 1.25rem;
+            width: 0.45rem;
+            height: 2px;
+            background-color: #e7e5e4;
+        }
+        @media (min-width: 640px) {
+            .tree-node::before {
+                left: -0.95rem;
+                top: 1.35rem;
+                width: 0.85rem;
+            }
+        }
+        @keyframes pulseHighlight {
+            0%, 100% { box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.35); }
+            50% { box-shadow: 0 0 0 6px rgba(217, 119, 6, 0.15); }
+        }
+        .search-match {
+            animation: pulseHighlight 2s infinite;
+            border-color: #d97706 !important;
+            background-color: #fffbeb !important;
+        }
+        @media print {
+            body { background-color: #ffffff !important; }
+            .no-print { display: none !important; }
+            .tree-children { display: block !important; }
+            .shadow-sm, .shadow-md, .shadow-lg { box-shadow: none !important; }
+            .card-print { break-inside: avoid; border: 1px solid #d6d3d1 !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-amber-200 selection:text-amber-900">
+
+    <!-- Compacte Header op gsm -->
+    <header class="bg-gradient-to-b from-amber-900 via-stone-800 to-stone-900 text-stone-100 shadow-lg">
+        <div class="max-w-6xl mx-auto px-3.5 sm:px-6 py-5 sm:py-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
+                <div>
+                    
+                    <h1 class="text-2xl sm:text-4xl font-bold tracking-tight text-white">
+                        Stamboom familie Tollet                     </h1>
+                    <p class="mt-1 text-stone-300 text-xs sm:text-sm max-w-2xl">
+                       
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-2 no-print">
+                               
+                </div>
+            </div>
+
+            <!-- Compacte Statistieken (2x2 op gsm) -->
+            <div id="statsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-4 sm:mt-6 pt-4 sm:pt-5 border-t border-stone-700/70"></div>
+        </div>
+    </header>
+
+    <!-- Bedieningsbalk: op gsm gewoon meescrollend, op desktop sticky -->
+    <div class="relative md:sticky md:top-0 z-30 bg-[#faf7f2]/95 backdrop-blur-md border-b border-stone-200/80 shadow-xs no-print">
+        <div class="max-w-6xl mx-auto px-3.5 sm:px-6 py-2.5">
+            <div class="flex flex-col md:flex-row gap-2 items-stretch md:items-center justify-between">
+                <div class="flex flex-col sm:flex-row gap-2 flex-1 min-w-0">
+                    <div class="relative flex-1 min-w-0">
+                        <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        <input
+                            type="text"
+                            id="searchInput"
+                            autocomplete="off"
+                            placeholder="Zoek naam of jaar (bv. 1977, Maurice)..."
+                            class="w-full pl-9 pr-8 py-1.5 sm:py-2 rounded-xl bg-white border border-stone-300 text-xs sm:text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-600 transition"
+                        >
+                        <button
+                            type="button"
+                            id="clearSearchBtn"
+                            onclick="clearSearch()"
+                            title="Zoekopdracht wissen"
+                            class="hidden absolute right-2 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-700 rounded-lg"
+                        >
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <div class="relative sm:w-60 shrink-0">
+                        <i data-lucide="filter" class="w-4 h-4 text-stone-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        <select
+                            id="branchSelect"
+                            aria-label="Filter op familietak"
+                            onchange="setFilter(this.value)"
+                            class="w-full pl-9 pr-8 py-1.5 sm:py-2 rounded-xl bg-white border border-stone-300 text-xs sm:text-sm font-medium text-stone-800 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-600 transition cursor-pointer"
+                        ></select>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                    <button type="button" onclick="toggleAllBranches(false)" class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-white hover:bg-stone-100 border border-stone-200 text-stone-700 text-xs font-medium transition">
+                        <i data-lucide="chevrons-down" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-700"></i>
+                        <span>Alles open</span>
+                    </button>
+                    <button type="button" onclick="toggleAllBranches(true)" class="flex-1 sm:flex-initial justify-center inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-white hover:bg-stone-100 border border-stone-200 text-stone-700 text-xs font-medium transition">
+                        <i data-lucide="chevrons-up" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-500"></i>
+                        <span>Alles dicht</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hoofdinhoud -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-3.5 sm:px-6 py-4 sm:py-6">
+        <div id="searchBanner" class="hidden mb-3 px-3.5 py-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm flex items-center justify-between gap-2">
+            <span id="searchBannerText" class="font-medium"></span>
+            <button type="button" onclick="clearSearch()" class="text-xs font-semibold underline hover:text-amber-700 shrink-0">Wissen</button>
+        </div>
+
+        <!-- Stamouders & Zijtak Overzicht -->
+        <section id="rootAncestorSection" class="mb-4 sm:mb-6">
+            <div class="bg-white rounded-2xl border border-stone-200/90 p-3.5 sm:p-5 shadow-xs card-print">
+                <div class="flex items-center gap-2 text-amber-800 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-2.5">
+                    <i data-lucide="landmark" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                    <span>Oorsprong — Generatie 0 &amp; 1</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3.5">
+                    <div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200/70">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-200/70 text-amber-900">Hoofdtak</span>
+                            <span class="text-[11px] text-stone-500">8 kinderen (1913–1928)</span>
+                        </div>
+                        <h2 class="text-base sm:text-lg font-bold text-stone-900 mt-1">Jef Tollet</h2>
+                        <p class="text-xs text-stone-600 mt-0.5">Stamvader van de 8 onderstaande takken, van oud naar jong.</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-rose-50/60 border border-rose-200/70">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-rose-200/70 text-rose-900">Zijtak</span>
+                            <span class="text-[11px] text-stone-500">Zus van Jef Tollet</span>
+                        </div>
+                        <h2 class="text-base sm:text-lg font-bold text-stone-900 mt-1">Angélique Tollet</h2>
+                        <p class="text-xs text-stone-600 mt-0.5">Moeder van René (x Angélique), grootmoeder van Maria (x Yves).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stamboom Container -->
+        <div id="treeContainer" class="space-y-4 sm:space-y-5"></div>
+
+        <!-- Lege staat -->
+        <div id="emptyState" class="hidden text-center py-10 px-4 bg-white rounded-2xl border border-stone-200">
+            <div class="w-11 h-11 rounded-full bg-stone-100 text-stone-400 flex items-center justify-center mx-auto mb-2.5">
+                <i data-lucide="search-x" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-base font-semibold text-stone-800">Geen familieleden gevonden</h3>
+            <p class="text-xs sm:text-sm text-stone-500 mt-1 max-w-md mx-auto">Probeer een andere naam of geboortejaar (zoals "1977", "Maurice" of "Doris").</p>
+            <button type="button" onclick="clearSearch()" class="mt-3.5 px-4 py-2 rounded-xl bg-amber-600 text-white text-xs sm:text-sm font-medium hover:bg-amber-700 transition">
+                Toon volledige stamboom
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-stone-100 border-t border-stone-200 py-4 mt-8 text-center text-xs text-stone-500">
+        <div class="max-w-6xl mx-auto px-4">
+            <p class="font-medium text-stone-700">Stamboom Familie Tollet</p>
+            <p class="mt-0.5">Tik op een kaart voor ouders, partners en kinderen.</p>
+        </div>
+    </footer>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4 bg-stone-900/50 backdrop-blur-xs no-print" onclick="closeModalOnBackdrop(event)">
+        <div class="bg-white rounded-t-2xl sm:rounded-2xl max-w-lg w-full shadow-2xl border border-stone-200 overflow-hidden" id="modalCard">
+            <div id="modalHeader" class="px-4 sm:px-6 py-4 border-b border-stone-100 flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                    <span id="modalBranchBadge" class="inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full mb-1"></span>
+                    <h3 id="modalTitle" class="text-lg sm:text-xl font-bold text-stone-900 break-words"></h3>
+                    <p id="modalSubtitle" class="text-xs text-stone-500 mt-0.5"></p>
+                </div>
+                <button type="button" onclick="closeModal()" class="p-1.5 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition shrink-0" aria-label="Sluiten">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-4 sm:p-6 space-y-3.5 max-h-[65vh] overflow-y-auto" id="modalBody"></div>
+            <div class="px-4 sm:px-6 py-3 bg-stone-50 border-t border-stone-100 flex justify-end">
+                <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-white text-xs sm:text-sm font-medium transition">
+                    Sluiten
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-4 right-4 z-50 translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-stone-900 text-white px-3.5 py-2.5 rounded-xl shadow-lg flex items-center gap-2 text-xs sm:text-sm font-medium">
+        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+        <span id="toastMessage">Link gekopieerd!</span>
+    </div>
+
+    <script>
+        const familyBranches = [
+            {
+                id: 'tak-angelique',
+                filterLabel: 'Zijtak Angélique',
+                title: 'Zijtak Angélique Tollet',
+                subtitle: 'Zus van stamvader Jef Tollet',
+                theme: {
+                    bg: 'bg-rose-50/70',
+                    border: 'border-rose-200',
+                    badge: 'bg-rose-100 text-rose-800',
+                    dot: 'bg-rose-500'
+                },
+                root: {
+                    id: 'angelique-1',
+                    name: 'Angélique Tollet',
+                    relationNote: 'Zus van Jef Tollet',
+                    generation: 'Gen. 1',
+                    children: [
+                        {
+                            id: 'rene-2',
+                            name: 'René',
+                            partner: 'Angélique',
+                            connector: 'x',
+                            generation: 'Gen. 2',
+                            children: [
+                                {
+                                    id: 'maria-yves-3',
+                                    name: 'Maria',
+                                    partner: 'Yves',
+                                    connector: 'x',
+                                    generation: 'Gen. 3',
+                                    children: [
+                                        {
+                                            id: 'johan-4',
+                                            name: 'Johan',
+                                            birthYear: '1985',
+                                            partner: 'Els',
+                                            connector: '+',
+                                            generation: 'Gen. 4',
+                                            children: []
+                                        },
+                                        {
+                                            id: 'ariane-4',
+                                            name: 'Ariane',
+                                            birthYear: '1988',
+                                            partner: 'Bart',
+                                            connector: '+',
+                                            generation: 'Gen. 4',
+                                            children: [
+                                                { id: 'louise-5', name: 'Louise', birthYear: '2021', generation: 'Gen. 5', children: [] },
+                                                { id: 'leonie-5', name: 'Leonie', birthYear: '2024', generation: 'Gen. 5', children: [] }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                id: 'tak-armand',
+                filterLabel: '1. Armand (°1913)',
+                title: '1. Tak Armand Tollet',
+                subtitle: 'Oudste kind van Jef Tollet (°1913)',
+                theme: {
+                    bg: 'bg-amber-50/70',
+                    border: 'border-amber-200',
+                    badge: 'bg-amber-100 text-amber-800',
+                    dot: 'bg-amber-500'
+                },
+                root: {
+                    id: 'armand-2',
+                    name: 'Armand Tollet',
+                    birthYear: '1913',
+                    generation: 'Gen. 2',
+                    children: [
+                        {
+                            id: 'jef-mlouise-3',
+                            name: 'Jef',
+                            partner: 'M. Louise',
+                            connector: 'x',
+                            generation: 'Gen. 3',
+                            children: [
+                                {
+                                    id: 'jan-mala-4',
+                                    name: 'Jan',
+                                    partner: 'Mala',
+                                    connector: '+',
+                                    generation: 'Gen. 4',
+                                    children: [
+                                        { id: 'jef-5', name: 'Jef', generation: 'Gen. 5', children: [] },
+                                        { id: 'juul-5', name: 'Juul', generation: 'Gen. 5', children: [] }
+                                    ]
+                                },
+                                {
+                                    id: 'sabira-peter-4',
+                                    name: 'Sabira',
+                                    partner: 'Peter',
+                                    connector: '+',
+                                    generation: 'Gen. 4',
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            id: 'roger-mimosa-3',
+                            name: 'Roger',
+                            partner: 'Mimosa',
+                            connector: 'x',
+                            generation: 'Gen. 3',
+                            children: [
+                                {
+                                    id: 'gunther-4',
+                                    name: 'Günther',
+                                    generation: 'Gen. 4',
+                                    children: [
+                                        { id: 'pauline-armand-5', name: 'Pauline', generation: 'Gen. 5', children: [] },
+                                        { id: 'cloe-5', name: 'Cloe', generation: 'Gen. 5', children: [] },
+                                        { id: 'luca-5', name: 'Luca', generation: 'Gen. 5', children: [] }
+                                    ]
+                                },
+                                {
+                                    id: 'carla-luc-4',
+                                    name: 'Carla',
+                                    partner: 'Luc',
+                                    connector: '+',
+                                    generation: 'Gen. 4',
+                                    children: [
+                                        { id: 'nina-5', name: 'Nina', generation: 'Gen. 5', children: [] },
+                                        { id: 'joren-5', name: 'Joren', generation: 'Gen. 5', children: [] },
+                                        { id: 'steffen-5', name: 'Steffen', generation: 'Gen. 5', children: [] }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                id: 'tak-delfine',
+                filterLabel: '2. Delfine (°1915)',
+                title: '2. Tak Delfine Tollet',
+                subtitle: 'Tweede kind van Jef Tollet (°1915)',
+                theme: {
+                    bg: 'bg-emerald-50/70',
+                    border: 'border-emerald-200',
+                    badge: 'bg-emerald-100 text-emerald-800',
+                    dot: 'bg-emerald-500'
+                },
+                root: {
+                    id: 'delfine-2',
+                    name: 'Delfine Tollet',
+                    birthYear: '1915',
+                    generation: 'Gen. 2',
+                    children: [
+                        {
+                            id: 'rosa-freddy-3',
+                            name: 'Rosa',
+                            partner: 'Freddy',
+                            connector: 'x',
+                            generation: 'Gen. 3',
+                            children: [
+                                {
+                                    id: 'nathalie-andy-4',
+                                    name: 'Nathalie',
+                                    birthYear: '1977',
+                                    partner: 'Andy',
+                                    connector: '+',
+                                    generation: 'Gen. 4',
+                                    children: [
+                                        { id: 'marie-5', name: 'Marie', birthYear: '2013', generation: 'Gen. 5', children: [] }
+                                    ]
+                                },
+                                {
+                                    id: 'annelies-geert-4',
+                                    name: 'Annelies',
+                                    birthYear: '1982',
+                                    partner: 'Geert',
+                                    connector: '+',
+                                    generation: 'Gen. 4',
+                                    children: [
+                                        { id: 'doris-5', name: 'Doris', birthYear: '2024', generation: 'Gen. 5', children: [] }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                id: 'tak-maurice',
+                filterLabel: '3. Maurice (°1918)',
+                title: '3. Tak Maurice Tollet',
+                subtitle: 'Derde kind van Jef Tollet (°1918)',
+                theme: {
+                    bg: 'bg-sky-50/70',
+                    border: 'border-sky-200',
+                    badge: 'bg-sky-100 text-sky-800',
+                    dot: 'bg-sky-500'
+                },
+                root: {
+                    id: 'maurice-2',
+                    name: 'Maurice Tollet',
+                    birthYear: '1918',
+                    generation: 'Gen. 2',
+                    children: [
+                        {
+                            id: 'greta-andre-3',
+                            name: 'Greta',
+                            birthYear: '1944',
+                            partner: 'André',
+                            partnerBirthYear: '1943',
+                            connector: 'x',
+                            generation: 'Gen. 3',
+                            children: [
+                                {
+                                    id: 'peter-els-4',
+                                    name: 'Peter',
+                                    birthYear: '1967',
+                                    partner: 'Els',
+                                    connector: '+',
+                                    generation: 'Gen. 4',
+                                    children: [
+                                        { id: 'martha-5', name: 'Martha', birthYear: '2003', generation: 'Gen. 5', children: [] },
+                                        { id: 'rik-maurice-5', name: 'Rik', birthYear: '2006', generation: 'Gen. 5', children: [] },
+                                        { id: 'tuur-5', name: 'Tuur', birthYear: '2008', generation: 'Gen. 5', children: [] }
+                                    ]
+                                },
+                                {
+                                    id: 'kris-fabienne-4',
+                                    name: 'Kris',
+                                    birthYear: '1970',
+                                    partner: 'Fabienne',
+                                    connector: '+',
+                                    generation: 'Gen. 4',
+                                    children: []
+                                },
+                                {
+                                    id: 'an-kristof-4',
+                                    name: 'An',
+                                    birthYear: '1975',
+                                    partner: 'Kristof',
+                                    connector: '+',
+                                    generation: 'Gen. 4',
+                                    children: [
+                                        { id: 'arne-5', name: 'Arne', birthYear: '2002', generation: 'Gen. 5', children: [] },
+                                        { id: 'mats-5', name: 'Mats', birthYear: '2005', generation: 'Gen. 5', children: [] }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            id: 'fernand-nicole-3',
+                            name: 'Fernand',
+                            birthYear: '1949',
+                            partner: 'Nicole',
+                            partnerBirthYear: '1950',
+                            connector: 'x',
+                            generation: 'Gen. 3',
+                            children: [
+                                {
+                                    id: 'tom-4',
+                                    name: 'Tom',
+                                    birthYear: '1977',
+                                    generation: 'Gen. 4',
+                                    children: []
+                                },
+                                {
+                                    id: 'sofie-philippe-4',
+                                    name: 'Sofie',
+                                    birthYear: '1980',
+                                    partner: 'Philippe',
+                                    partnerBirthYear: '1981',
+                                    connector: 'x',
+                                    generation: 'Gen. 4',
+                                    children: [
+                                        { id: 'febe-5', name: 'Febe', birthYear: '2008', generation: 'Gen. 5', children: [] },
+                                        { id: 'bent-5', name: 'Bent', birthYear: '2010', generation: 'Gen. 5', children: [] },
+                                        { id: 'jytte-5', name: 'Jytte', birthYear: '2012', generation: 'Gen. 5', children: [] }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                id: 'tak-rik',
+                filterLabel: '4. Rik (°1920)',
+                title: '4. Tak Rik Tollet',
+                subtitle: 'Vierde kind van Jef Tollet (°1920 — vroeg overleden)',
+                theme: {
+                    bg: 'bg-purple-50/70',
+                    border: 'border-purple-200',
+                    badge: 'bg-purple-100 text-purple-800',
+                    dot: 'bg-purple-500'
+                },
+                root: {
+                    id: 'rik-2',
+                    name: 'Rik Tollet',
+                    birthYear: '1920',
+                    partner: 'Romaine',
+                    connector: 'x',
+                    relationNote: 'Rik is vroeg overleden. Zijn weduwe Romaine hertrouwde later met Maurice.',
+                    generation: 'Gen. 2',
+                    children: [
+                        {
+                            id: 'jos-jose-3',
+                            name: 'Jos',
+                            partner: 'José',
+                            connector: '+',
+                            generation: 'Gen. 3',
+                            children: [
+                                {
+                                    id: 'nadia-4',
+                                    name: 'Nadia',
+                                    generation: 'Gen. 4',
+                                    children: [
+                                        { id: 'paulien-rik-5', name: 'Paulien', birthYear: '2005', generation: 'Gen. 5', children: [] },
+                                        { id: 'machiel-5', name: 'Machiel', birthYear: '2008', generation: 'Gen. 5', children: [] }
+                                    ]
+                                },
+                                {
+                                    id: 'peggy-4',
+                                    name: 'Peggy',
+                                    generation: 'Gen. 4',
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            id: 'nicole-maurice-3',
+                            name: 'Nicole',
+                            relationNote: 'Kind uit tweede huwelijk van weduwe Romaine x Maurice',
+                            badgeLabel: 'Romaine x Maurice',
+                            generation: 'Gen. 3',
+                            children: []
+                        },
+                        {
+                            id: 'raoul-maurice-3',
+                            name: 'Raoul',
+                            relationNote: 'Kind uit tweede huwelijk van weduwe Romaine x Maurice',
+                            badgeLabel: 'Romaine x Maurice',
+                            generation: 'Gen. 3',
+                            children: []
+                        }
+                    ]
+                }
+            },
+            {
+                id: 'tak-therese',
+                filterLabel: '5. Thérèse (°1921)',
+                title: '5. Tak Thérèse Tollet',
+                subtitle: 'Vijfde kind van Jef Tollet (°1921)',
+                theme: {
+                    bg: 'bg-orange-50/70',
+                    border: 'border-orange-200',
+                    badge: 'bg-orange-100 text-orange-800',
+                    dot: 'bg-orange-500'
+                },
+                root: {
+                    id: 'therese-2',
+                    name: 'Thérèse Tollet',
+                    birthYear: '1921',
+                    generation: 'Gen. 2',
+                    children: [
+                        {
+                            id: 'andre-therese-3',
+                            name: 'André',
+                            generation: 'Gen. 3',
+                            children: []
+                        },
+                        {
+                            id: 'raymond-christiane-3',
+                            name: 'Raymond',
+                            partner: 'Christiane',
+                            connector: 'x',
+                            generation: 'Gen. 3',
+                            children: [
+                                { id: 'bart-therese-4', name: 'Bart', generation: 'Gen. 4', children: [] },
+                                { id: 'wim-therese-4', name: 'Wim', generation: 'Gen. 4', children: [] }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                id: 'tak-lucien',
+                filterLabel: '6. Lucien (°1924)',
+                title: '6. Tak Lucien Tollet',
+                subtitle: 'Zesde kind van Jef Tollet (°1924)',
+                theme: {
+                    bg: 'bg-stone-100/80',
+                    border: 'border-stone-300',
+                    badge: 'bg-stone-200 text-stone-800',
+                    dot: 'bg-stone-500'
+                },
+                root: {
+                    id: 'lucien-2',
+                    name: 'Lucien Tollet',
+                    birthYear: '1924',
+                    relationNote: 'Geen nakomelingen genoteerd',
+                    generation: 'Gen. 2',
+                    children: []
+                }
+            },
+            {
+                id: 'tak-marcel',
+                filterLabel: '7. Marcel (°1926)',
+                title: '7. Tak Marcel Tollet',
+                subtitle: 'Zevende kind van Jef Tollet (°1926)',
+                theme: {
+                    bg: 'bg-teal-50/70',
+                    border: 'border-teal-200',
+                    badge: 'bg-teal-100 text-teal-800',
+                    dot: 'bg-teal-500'
+                },
+                root: {
+                    id: 'marcel-2',
+                    name: 'Marcel Tollet',
+                    birthYear: '1926',
+                    generation: 'Gen. 2',
+                    children: [
+                        {
+                            id: 'maria-luc-3',
+                            name: 'Maria',
+                            partner: 'Luc',
+                            connector: 'x',
+                            generation: 'Gen. 3',
+                            children: [
+                                {
+                                    id: 'joery-sofie-4',
+                                    name: 'Joery',
+                                    birthYear: '1977',
+                                    partner: 'Sofie',
+                                    partnerBirthYear: '1978',
+                                    connector: '+',
+                                    generation: 'Gen. 4',
+                                    children: [
+                                        { id: 'siebren-5', name: 'Siebren', birthYear: '2005', generation: 'Gen. 5', children: [] },
+                                        { id: 'josefien-5', name: 'Josefien', birthYear: '2012', generation: 'Gen. 5', children: [] }
+                                    ]
+                                },
+                                {
+                                    id: 'steven-lissa-4',
+                                    name: 'Steven',
+                                    birthYear: '1980',
+                                    partner: 'Lissa',
+                                    partnerBirthYear: '1981',
+                                    connector: '+',
+                                    generation: 'Gen. 4',
+                                    children: [
+                                        { id: 'owen-5', name: 'Owen', birthYear: '2005', generation: 'Gen. 5', children: [] },
+                                        { id: 'maya-5', name: 'Maya', birthYear: '2008', generation: 'Gen. 5', children: [] }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                id: 'tak-andre',
+                filterLabel: '8. André (°1928)',
+                title: '8. Tak André Tollet',
+                subtitle: 'Jongste kind van Jef Tollet (°1928)',
+                theme: {
+                    bg: 'bg-indigo-50/70',
+                    border: 'border-indigo-200',
+                    badge: 'bg-indigo-100 text-indigo-800',
+                    dot: 'bg-indigo-500'
+                },
+                root: {
+                    id: 'andre-2',
+                    name: 'André Tollet',
+                    birthYear: '1928',
+                    generation: 'Gen. 2',
+                    children: [
+                        {
+                            id: 'sylvia-walter-3',
+                            name: 'Sylvia',
+                            partner: 'Walter',
+                            connector: 'x',
+                            generation: 'Gen. 3',
+                            children: [
+                                {
+                                    id: 'vicky-nico-4',
+                                    name: 'Vicky',
+                                    partner: 'Nico',
+                                    connector: '+',
+                                    generation: 'Gen. 4',
+                                    children: [
+                                        { id: 'marth-5', name: 'Marth', generation: 'Gen. 5', children: [] }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ];
+
+        let activeFilter = 'all';
+        let searchQuery = '';
+        let collapsedNodes = new Set();
+        const nodeLookup = new Map();
+
+        function indexNodes() {
+            nodeLookup.clear();
+            function walk(node, branch, parentNode, ancestry) {
+                const currentAncestry = [...ancestry, node];
+                nodeLookup.set(node.id, { node, branch, parentNode, ancestry: currentAncestry });
+                if (Array.isArray(node.children)) {
+                    node.children.forEach(child => walk(child, branch, node, currentAncestry));
+                }
+            }
+            familyBranches.forEach(branch => walk(branch.root, branch, null, []));
+        }
+
+        function countPeopleInNode(node) {
+            let count = 1;
+            if (node.partner) count += 1;
+            if (Array.isArray(node.children)) {
+                node.children.forEach(c => { count += countPeopleInNode(c); });
+            }
+            return count;
+        }
+
+        function renderStats() {
+            let totalPeople = 2;
+            familyBranches.forEach(b => { totalPeople += countPeopleInNode(b.root); });
+
+            document.getElementById('statsContainer').innerHTML = `
+                <div class="bg-white/5 border border-white/10 rounded-xl px-3 py-2">
+                    <div class="text-[11px] text-stone-400">Takken</div>
+                    <div class="text-base sm:text-xl font-bold text-white">${familyBranches.length}</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-xl px-3 py-2">
+                    <div class="text-[11px] text-stone-400">Generaties</div>
+                    <div class="text-base sm:text-xl font-bold text-white">5</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-xl px-3 py-2">
+                    <div class="text-[11px] text-stone-400">Personen</div>
+                    <div class="text-base sm:text-xl font-bold text-white">${totalPeople}</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-xl px-3 py-2">
+                    <div class="text-[11px] text-stone-400">Periode</div>
+                    <div class="text-base sm:text-xl font-bold text-white">1913–2024</div>
+                </div>
+            `;
+        }
+
+        function renderBranchSelect() {
+            const select = document.getElementById('branchSelect');
+            const options = [
+                `<option value="all">Alle takken (${familyBranches.length})</option>`,
+                ...familyBranches.map(b => `<option value="${b.id}">${b.filterLabel}</option>`)
+            ];
+            select.innerHTML = options.join('');
+            select.value = activeFilter;
+        }
+
+        function setFilter(filterId) {
+            activeFilter = filterId;
+            renderBranchSelect();
+            renderTree();
+        }
+
+        function nodeMatchesSearch(node, query) {
+            if (!query) return false;
+            const q = query.trim().toLowerCase();
+            if (!q) return false;
+            const haystack = [
+                node.name,
+                node.birthYear,
+                node.partner,
+                node.partnerBirthYear,
+                node.relationNote,
+                node.badgeLabel,
+                node.generation
+            ].filter(Boolean).join(' ').toLowerCase();
+            return haystack.includes(q);
+        }
+
+        function subtreeHasMatch(node, query) {
+            if (!query.trim()) return true;
+            if (nodeMatchesSearch(node, query)) return true;
+            if (!Array.isArray(node.children)) return false;
+            return node.children.some(child => subtreeHasMatch(child, query));
+        }
+
+        function countSubtreeMatches(node, query) {
+            if (!query.trim()) return 0;
+            let matches = nodeMatchesSearch(node, query) ? 1 : 0;
+            if (Array.isArray(node.children)) {
+                node.children.forEach(child => { matches += countSubtreeMatches(child, query); });
+            }
+            return matches;
+        }
+
+        function formatPersonTitle(node) {
+            let text = node.name;
+            if (node.birthYear) text += ` (°${node.birthYear})`;
+            if (node.partner) {
+                text += ` ${node.connector || '+'} ${node.partner}`;
+                if (node.partnerBirthYear) text += ` (°${node.partnerBirthYear})`;
+            }
+            return text;
+        }
+
+        function renderNodeHTML(node, branch, depth = 0) {
+            const q = searchQuery.trim();
+            const isSearching = q.length > 0;
+
+            if (isSearching && !subtreeHasMatch(node, q)) {
+                return '';
+            }
+
+            const hasChildren = Array.isArray(node.children) && node.children.length > 0;
+            const directMatch = isSearching && nodeMatchesSearch(node, q);
+            const isCollapsed = !isSearching && collapsedNodes.has(node.id);
+            const childrenCount = hasChildren ? node.children.length : 0;
+
+            const childrenHTML = hasChildren
+                ? `<div class="tree-branch tree-children mt-2 space-y-2 ${isCollapsed ? 'hidden' : ''}">
+                        ${node.children.map(child => renderNodeHTML(child, branch, depth + 1)).join('')}
+                   </div>`
+                : '';
+
+            return `
+                <div class="tree-node">
+                    <div class="group flex items-start justify-between gap-2 bg-white hover:bg-stone-50/90 border ${directMatch ? 'search-match' : 'border-stone-200/90'} rounded-xl px-3 py-2 shadow-2xs transition cursor-pointer card-print" onclick="openModal('${node.id}')">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <span class="font-semibold text-xs sm:text-base text-stone-900 break-words">${formatPersonTitle(node)}</span>
+                                ${node.generation ? `<span class="text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded-full ${branch.theme.badge} font-medium shrink-0">${node.generation}</span>` : ''}
+                                ${node.badgeLabel ? `<span class="text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-medium">${node.badgeLabel}</span>` : ''}
+                            </div>
+                            ${node.relationNote ? `<p class="text-[11px] sm:text-xs text-stone-500 mt-0.5">${node.relationNote}</p>` : ''}
+                        </div>
+
+                        <div class="flex items-center gap-1 shrink-0 no-print">
+                            ${hasChildren ? `
+                                <button
+                                    type="button"
+                                    onclick="event.stopPropagation(); toggleNode('${node.id}')"
+                                    title="${isCollapsed ? 'Kinderen tonen' : 'Kinderen verbergen'}"
+                                    class="inline-flex items-center gap-0.5 px-1.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 text-[11px] font-medium transition"
+                                >
+                                    <span>${childrenCount}</span>
+                                    <i data-lucide="${isCollapsed ? 'chevron-down' : 'chevron-up'}" class="w-3.5 h-3.5"></i>
+                                </button>
+                            ` : ''}
+                            <span class="p-1 rounded-lg text-stone-400 group-hover:text-amber-700 transition" title="Details bekijken">
+                                <i data-lucide="info" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                            </span>
+                        </div>
+                    </div>
+                    ${childrenHTML}
+                </div>
+            `;
+        }
+
+        function renderTree() {
+            const q = searchQuery.trim();
+            const isSearching = q.length > 0;
+
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const banner = document.getElementById('searchBanner');
+            const bannerText = document.getElementById('searchBannerText');
+
+            if (isSearching) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            const visibleBranches = familyBranches.filter(branch => {
+                if (activeFilter !== 'all' && branch.id !== activeFilter) return false;
+                if (isSearching) return subtreeHasMatch(branch.root, q);
+                return true;
+            });
+
+            if (isSearching) {
+                let totalMatches = 0;
+                visibleBranches.forEach(b => { totalMatches += countSubtreeMatches(b.root, q); });
+                banner.classList.remove('hidden');
+                bannerText.textContent = totalMatches > 0
+                    ? `${totalMatches} ${totalMatches === 1 ? 'resultaat' : 'resultaten'} voor "${q}"`
+                    : `Geen resultaten voor "${q}"`;
+            } else {
+                banner.classList.add('hidden');
+            }
+
+            const treeContainer = document.getElementById('treeContainer');
+            const emptyState = document.getElementById('emptyState');
+
+            if (visibleBranches.length === 0) {
+                treeContainer.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                lucide.createIcons();
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            treeContainer.innerHTML = visibleBranches.map(branch => {
+                const branchCollapsed = !isSearching && collapsedNodes.has(branch.id);
+                return `
+                    <section class="rounded-2xl border ${branch.theme.border} ${branch.theme.bg} p-3 sm:p-5 shadow-2xs card-print">
+                        <div class="flex items-center justify-between gap-2 pb-2.5 mb-2.5 border-b ${branch.theme.border}">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="w-2.5 h-2.5 rounded-full ${branch.theme.dot} shrink-0"></span>
+                                <div class="min-w-0">
+                                    <h2 class="text-base sm:text-xl font-bold text-stone-900 truncate">${branch.title}</h2>
+                                    <p class="text-[11px] sm:text-xs text-stone-600 truncate">${branch.subtitle}</p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onclick="toggleNode('${branch.id}')"
+                                class="no-print shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-xl bg-white/90 hover:bg-white border border-stone-200 text-[11px] sm:text-xs font-medium text-stone-700 transition"
+                            >
+                                <span>${branchCollapsed ? 'Open' : 'Dicht'}</span>
+                                <i data-lucide="${branchCollapsed ? 'chevron-down' : 'chevron-up'}" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        <div class="${branchCollapsed ? 'hidden' : ''}">
+                            ${renderNodeHTML(branch.root, branch, 0)}
+                        </div>
+                    </section>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        function toggleNode(id) {
+            if (collapsedNodes.has(id)) {
+                collapsedNodes.delete(id);
+            } else {
+                collapsedNodes.add(id);
+            }
+            renderTree();
+        }
+
+        function toggleAllBranches(collapse) {
+            collapsedNodes.clear();
+            if (collapse) {
+                familyBranches.forEach(branch => {
+                    collapsedNodes.add(branch.id);
+                    function addChildren(n) {
+                        collapsedNodes.add(n.id);
+                        if (Array.isArray(n.children)) n.children.forEach(addChildren);
+                    }
+                    addChildren(branch.root);
+                });
+            }
+            renderTree();
+        }
+
+        function clearSearch() {
+            searchQuery = '';
+            const input = document.getElementById('searchInput');
+            input.value = '';
+            renderTree();
+            input.focus();
+        }
+
+        function openModal(nodeId) {
+            const entry = nodeLookup.get(nodeId);
+            if (!entry) return;
+
+            const { node, branch, parentNode, ancestry } = entry;
+            const modal = document.getElementById('detailModal');
+            const badge = document.getElementById('modalBranchBadge');
+            const title = document.getElementById('modalTitle');
+            const subtitle = document.getElementById('modalSubtitle');
+            const body = document.getElementById('modalBody');
+
+            badge.className = `inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full mb-1 ${branch.theme.badge}`;
+            badge.textContent = `${branch.title}${node.generation ? ' • ' + node.generation : ''}`;
+            title.textContent = formatPersonTitle(node);
+            subtitle.textContent = node.birthYear ? `Geboren in ${node.birthYear}` : 'Geboortejaar niet genoteerd';
+
+            const lineageItems = ancestry.map((anc, idx) => {
+                const label = formatPersonTitle(anc);
+                if (idx === ancestry.length - 1) {
+                    return `<span class="font-semibold text-stone-900">${label}</span>`;
+                }
+                return `<button type="button" onclick="openModal('${anc.id}')" class="text-amber-700 hover:underline font-medium">${label}</button>`;
+            }).join(' <span class="text-stone-400">→</span> ');
+
+            const childrenList = Array.isArray(node.children) && node.children.length > 0
+                ? `<ul class="space-y-1.5 mt-1.5">
+                        ${node.children.map(c => `
+                            <li>
+                                <button type="button" onclick="openModal('${c.id}')" class="w-full text-left px-3 py-2 rounded-xl bg-stone-50 hover:bg-amber-50/70 border border-stone-200/80 text-xs sm:text-sm flex items-center justify-between transition">
+                                    <span class="font-medium text-stone-800">${formatPersonTitle(c)}</span>
+                                    <i data-lucide="chevron-right" class="w-4 h-4 text-stone-400"></i>
+                                </button>
+                            </li>
+                        `).join('')}
+                   </ul>`
+                : `<p class="text-xs sm:text-sm text-stone-500 mt-1">Geen kinderen genoteerd op dit overzicht.</p>`;
+
+            body.innerHTML = `
+                <div>
+                    <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Afstammingslijn binnen tak</div>
+                    <div class="text-xs sm:text-sm text-stone-700 mt-1 leading-relaxed">${lineageItems}</div>
+                </div>
+                ${node.partner ? `
+                    <div>
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Partner</div>
+                        <p class="text-xs sm:text-sm text-stone-800 mt-0.5 font-medium">${node.partner}${node.partnerBirthYear ? ` (°${node.partnerBirthYear})` : ''}</p>
+                    </div>
+                ` : ''}
+                ${parentNode ? `
+                    <div>
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Ouder / Voorgaande kaart</div>
+                        <button type="button" onclick="openModal('${parentNode.id}')" class="mt-0.5 text-xs sm:text-sm text-amber-700 hover:underline font-medium">${formatPersonTitle(parentNode)}</button>
+                    </div>
+                ` : ''}
+                ${node.relationNote ? `
+                    <div class="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200/70 text-xs text-stone-700">
+                        ${node.relationNote}
+                    </div>
+                ` : ''}
+                <div>
+                    <div class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Kinderen (${Array.isArray(node.children) ? node.children.length : 0})</div>
+                    ${childrenList}
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('detailModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function closeModalOnBackdrop(event) {
+            if (event.target.id === 'detailModal') closeModal();
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 2600);
+        }
+
+        async function copyShareLink() {
+            const url = window.location.href;
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(url);
+                } else {
+                    const input = document.createElement('input');
+                    input.value = url;
+                    document.body.appendChild(input);
+                    input.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(input);
+                }
+                showToast('Link gekopieerd naar klembord!');
+            } catch {
+                showToast('Kopieer de adresbalk om de link te delen.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            indexNodes();
+            renderStats();
+            renderBranchSelect();
+            renderTree();
+
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                renderTree();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeModal();
+            });
+        });
+    </script>
+</body>
+</html>
